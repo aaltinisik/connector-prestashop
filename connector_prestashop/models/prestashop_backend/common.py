@@ -120,9 +120,9 @@ class PrestashopBackend(models.Model):
         for backend in self:
             for model_name in [
                 'prestashop.res.lang',
-                'prestashop.res.country',
-                'prestashop.res.currency',
-                'prestashop.account.tax',
+            #    'prestashop.res.country',
+            #    'prestashop.res.currency',
+            #    'prestashop.account.tax',
             ]:
                 env = get_environment(session, model_name, backend.id)
                 directBinder = env.get_connector_unit(DirectBinder)
