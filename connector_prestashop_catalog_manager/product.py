@@ -350,6 +350,10 @@ class ProductTemplateExportMapper(TranslationPrestashopExportMapper):
     def reference(self, record):
         return {'reference': record.reference or record.default_code or ''}
 
+    @mapping
+    def low_stock_alert(self, record):
+        return {'low_stock_alert': 0}
+
     def _get_product_category(self, record):
         ext_categ_ids = []
         binder = self.binder_for('prestashop.product.category')
