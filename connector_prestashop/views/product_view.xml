@@ -16,24 +16,7 @@
                             ('product_variant_count', '=', 1)
                             ]}"/>
                </field>
-               <xpath expr="//field[@name='lst_price']" position="attributes">
-                   <attribute name="readonly">1</attribute>
-               </xpath>
            </field>
-        </record>
-
-        <record id="product_product_tree_prestashop_view" model="ir.ui.view">
-            <field name="name">product.product.prestashop.tree</field>
-            <field name="model">product.product</field>
-            <field name="inherit_id" ref="product.product_product_tree_view" />
-            <field name="arch" type="xml">
-                <field name="lst_price" position="after">
-                    <field name="default_on"/>
-                </field>
-                <field name="lst_price" position="after">
-                    <field name="impact_price"/>
-                </field>
-            </field>
         </record>
 
         <!--This is a product inherited form that will be dynamically populated-->

@@ -26,7 +26,12 @@ class PrestashopShop(models.Model):
     @api.multi
     @api.depends('shop_group_id', 'shop_group_id.backend_id')
     def _compute_backend_id(self):
-        self.backend_id = self.shop_group_id.backend_id.id
+        i = 0
+        while i<len(self):
+            self[i].backend_id = self[i].shop_group_id.backend_id.id
+            i = i + 1
+
+
 
     name = fields.Char(
         string='Name',
