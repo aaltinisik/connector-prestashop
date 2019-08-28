@@ -27,10 +27,10 @@
             <field name="model">product.product</field>
             <field name="inherit_id" ref="product.product_product_tree_view" />
             <field name="arch" type="xml">
-                <field name="lst_price" position="after">
+                <field name="name" position="after">
                     <field name="default_on"/>
                 </field>
-                <field name="lst_price" position="after">
+                <field name="name" position="after">
                     <field name="impact_price"/>
                 </field>
             </field>

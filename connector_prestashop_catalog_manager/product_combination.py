@@ -196,6 +196,10 @@ class ProductCombinationExportMapper(TranslationPrestashopExportMapper):
     ]
 
     @mapping
+    def low_stock_alert(self, record):
+        return {'low_stock_alert': 0}
+    
+    @mapping
     def combination_default(self, record):
         return {'default_on': str(int(record['default_on']))}
 
