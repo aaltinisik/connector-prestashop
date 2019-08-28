@@ -156,7 +156,7 @@ class ProductImageExportMapper(PrestashopExportMapper):
             if storage == 'url':
                 file_name = os.path.splitext(
                     os.path.basename(record.odoo_id.url))
-            elif storage == 'db':
+            elif storage in ['db', 'attachment']:
                 if not record.odoo_id.filename:
                     file_name = '%s_%s.jpg' % (
                         record.odoo_id.owner_model,
@@ -166,6 +166,8 @@ class ProductImageExportMapper(PrestashopExportMapper):
             elif storage == 'file':
                 file_name = os.path.splitext(
                     os.path.basename(record.odoo_id.path))
+
+
         return file_name
 
     @mapping
@@ -195,5 +197,5 @@ class ProductImageExportMapper(PrestashopExportMapper):
     def filename(self, record):
         file_name = record.filename
         if not file_name:
-            file_name = '.'.join(self._get_file_name(record))
+            file_name = ''.join(self._get_file_name(record))
         return {'filename': file_name}

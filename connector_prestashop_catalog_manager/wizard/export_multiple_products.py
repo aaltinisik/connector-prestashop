@@ -2,6 +2,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 from openerp import models, fields, api
+from datetime import datetime
 import unicodedata
 import re
 
@@ -136,3 +137,4 @@ class ExportMultipleProducts(models.TransientModel):
                 for tmpl in presta_tmpl:
                     if ' ' in tmpl.link_rewrite:
                         tmpl.link_rewrite = get_slug(tmpl.link_rewrite)
+                presta_tmpl.write({'date_upd' : datetime.now()})

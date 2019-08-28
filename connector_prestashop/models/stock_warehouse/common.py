@@ -29,6 +29,7 @@ class PrestashopShop(models.Model):
         for shop in self:
             shop.backend_id = shop.shop_group_id.backend_id.id
 
+
     name = fields.Char(
         string='Name',
         help="The name of the method on the backend",

@@ -198,7 +198,7 @@ class ProductCombinationExportMapper(TranslationPrestashopExportMapper):
     @mapping
     def low_stock_alert(self, record):
         return {'low_stock_alert': 0}
-    
+
     @mapping
     def combination_default(self, record):
         return {'default_on': str(int(record['default_on']))}
@@ -215,7 +215,7 @@ class ProductCombinationExportMapper(TranslationPrestashopExportMapper):
     def _unit_price_impact(self, record):
         tax = record.taxes_id[:1]
         factor_tax = tax.price_include and (1 + tax.amount) or 1.0
-        return {'price': str(record.impact_price / factor_tax)}
+        return {'price': str(record.attr_price / factor_tax)}
 
     @mapping
     def cost_price(self, record):
