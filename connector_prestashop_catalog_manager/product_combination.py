@@ -66,6 +66,12 @@ def product_product_write(session, model_name, record_id, fields):
         # If user modify any variant we delay template export but before
         # check if the template have a queued job
         template = record.mapped('prestashop_bind_ids.product_tmpl_id')
+        # If this is the only variant there would be no binding, 
+        # so set the template to product_tmpl_id
+        
+        if not template:
+            template = record.product_tmpl_id
+            
         for binding in template.prestashop_bind_ids:
             # check if there is other queued job
             func = "openerp.addons.connector_prestashop.unit.exporter." \
