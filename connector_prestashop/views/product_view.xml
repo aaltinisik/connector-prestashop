@@ -2,6 +2,69 @@
 <openerp>
     <data>
 
+		<record id="product_feature_form_view" model="ir.ui.view">
+           <field name="model">product.feature</field>
+           <field name="arch" type="xml">
+               <form string="feature">
+                    <group>
+                        <field name="name"/>
+                        <field name="value_ids"/>
+                        <field name="prestashop_bind_ids"/>
+                    </group>
+                    
+                </form>
+           </field>
+        </record>
+        
+        <record id="product_feature_tree_view" model="ir.ui.view">
+           <field name="model">product.feature</field>
+           <field name="arch" type="xml">
+               <tree string="feature">
+                    
+                    <field name="name"/>
+                    
+                </tree>
+           </field>
+        </record>
+        
+        <record id="product_feature_value_form_view" model="ir.ui.view">
+           <field name="model">product.feature.value</field>
+           <field name="arch" type="xml">
+               <form string="feature">
+                    <group>
+                        <field name="feature_id"/>
+                        <field name="name"/>
+                        <field name="prestashop_bind_ids"/>
+                    </group>
+                    
+                </form>
+           </field>
+        </record>
+        
+        <record id="product_feature_value_tree_view" model="ir.ui.view">
+           <field name="model">product.feature.value</field>
+           <field name="arch" type="xml">
+               <tree string="feature">
+                    <field name="feature_id"/>
+                    <field name="name"/>
+                    
+                </tree>
+           </field>
+        </record>
+
+		
+        
+        <record id="product_template_feature_tree_view" model="ir.ui.view">
+           <field name="model">product.template.feature</field>
+           <field name="arch" type="xml">
+               <tree>
+                    <field name="feature_id"/>
+                    <field name="feature_value_id"/>
+                    
+                </tree>
+           </field>
+        </record>
+
         <record id="product_normal_form_view_default_check" model="ir.ui.view">
            <field name="model">product.product</field>
            <field name="inherit_id" ref="product.product_normal_form_view" />
@@ -64,6 +127,11 @@
            <field name="inherit_id"
                   ref="connector_base_product.product_template_common_form" />
            <field name="arch" type="xml">
+           	   <page name="connector" position="before">
+                    <page name="features" string="Features">
+                    	<field name="feature_ids"/>
+                    </page>
+               </page>
                <page name="connector" position="attributes">
                     <attribute name="invisible">0</attribute>
                </page>

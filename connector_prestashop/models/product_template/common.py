@@ -23,6 +23,76 @@ except ImportError:
                   'or PrestaShopWebServiceError`.')
 
 
+class ProductFeature(models.Model):
+    _name = 'product.feature'
+    
+    name = fields.Char('Name', translate=True)
+    value_ids = fields.One2many('product.feature.value','feature_id',string='Values')
+    
+    prestashop_bind_ids = fields.One2many(
+        comodel_name='prestashop.product.feature',
+        inverse_name='odoo_id',
+        string='PrestaShop Bindings (features)',
+    )
+    
+class PrestashopProductFeature(models.Model):
+    _name = 'prestashop.product.feature'
+    _inherit = 'prestashop.binding.odoo'
+    _inherits = {'product.feature': 'odoo_id'}
+    
+    
+    odoo_id = fields.Many2one(
+        comodel_name='product.feature',
+        required=True,
+        ondelete='cascade',
+        string='Feature'
+    )
+    
+    
+    
+class ProductFeatureValue(models.Model):
+    _name = 'product.feature.value'
+    
+    feature_id = fields.Many2one('product.feature',string='Feature')
+    name = fields.Char('Name', translate='True')
+    
+    prestashop_bind_ids = fields.One2many(
+        comodel_name='prestashop.product.feature.value',
+        inverse_name='odoo_id',
+        string='PrestaShop Bindings (features)',
+    )
+    
+
+class PrestashopProductFeatureValue(models.Model):
+    _name = 'prestashop.product.feature.value'
+    _inherit = 'prestashop.binding.odoo'
+    _inherits = {'product.feature.value': 'odoo_id'}
+    
+    
+    odoo_id = fields.Many2one(
+        comodel_name='product.feature.value',
+        required=True,
+        ondelete='cascade',
+        string='Feature'
+    )
+    
+    feature_id = fields.Many2one(
+        comodel_name='prestashop.product.feature',
+        string='Feature',
+        required=True,
+        ondelete='cascade',
+    )
+    
+
+class ProductTemplateFeature(models.Model):
+    _name = 'product.template.feature'
+    
+    product_tmpl_id = fields.Many2one('product.template',string='Product Template')
+    feature_id = fields.Many2one('product.feature',string='Feature', required=True)
+    feature_value_id = fields.Many2one('product.feature.value', string='Value', required=True)
+
+
+
 class ProductTemplate(models.Model):
     _inherit = 'product.template'
 
@@ -32,6 +102,8 @@ class ProductTemplate(models.Model):
         copy=False,
         string='PrestaShop Bindings',
     )
+    
+    feature_ids = fields.One2many('product.template.feature','product_tmpl_id',string='Features')
 
     @api.multi
     def update_prestashop_quantities(self):
@@ -43,6 +115,8 @@ class ProductTemplate(models.Model):
                 'product_variant_ids.prestashop_bind_ids'
             ).recompute_prestashop_qty()
         return True
+
+
 
 
 class PrestashopProductTemplate(models.Model):
@@ -103,6 +177,7 @@ class PrestashopProductTemplate(models.Model):
         inverse_name='main_template_id',
         string='Combinations'
     )
+    
     reference = fields.Char(string='Original reference')
     on_sale = fields.Boolean(string='Show on sale icon')
 
@@ -148,6 +223,20 @@ class PrestashopProductTemplate(models.Model):
                     variant.recompute_prestashop_qty()
         return True
 
+
+@prestashop
+class ProductFeatureAdapter(GenericAdapter):
+    _model_name = 'prestashop.product.feature'
+    _prestashop_model = 'product_features'
+    _export_node_name = 'product_feature'
+    
+    
+@prestashop
+class ProductFeatureValueAdapter(GenericAdapter):
+    _model_name = 'prestashop.product.feature.value'
+    _prestashop_model = 'product_feature_values'
+    _export_node_name = 'product_feature_value'
+    
 
 @prestashop
 class TemplateAdapter(GenericAdapter):

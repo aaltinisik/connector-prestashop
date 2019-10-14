@@ -8,9 +8,12 @@
                 <form string="Export Products">
                     <group>
                         <label string="Active selected products"/>
+                        
                     </group>
                     <group>
-                        <field name="force_status"/>
+                    	<field name="backend_ids" widget="many2many_checkboxes"/>
+                        
+                    	<field name="force_status"/>
                     </group>
                     <footer>
                         <button name="active_products" type="object"
@@ -38,6 +41,7 @@
                 <form string="Export Products">
                     <group>
                         <label string="deactive selected products"/>
+                        <field name="backend_ids" nolabel="1" widget="many2many_checkboxes"/>
                     </group>
                     <footer>
                         <button name="deactive_products" type="object"
