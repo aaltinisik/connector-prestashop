@@ -366,6 +366,8 @@ class TemplateRecordImport(TranslatableRecordImporter):
     }
 
     def _after_import(self, erp_id):
+        #TODO: import features
+        #self.import_features();
         self.import_images(erp_id)
         self.import_combinations()
         self.attribute_line(erp_id)

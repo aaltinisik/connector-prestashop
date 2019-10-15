@@ -38,6 +38,8 @@ class PrestashopBinder(Binder):
         'prestashop.product.supplierinfo',
         'prestashop.mail.message',
         'prestashop.groups.pricelist',
+        'prestashop.product.feature',
+        'prestashop.product.feature.value'
     ]
 
     def to_odoo(self, external_id, unwrap=False):

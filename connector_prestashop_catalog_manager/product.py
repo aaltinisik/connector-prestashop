@@ -216,8 +216,18 @@ class ProductTemplateExport(TranslationPrestashopExporter):
             'prestashop.product.category')
         attribute_obj = self.session.env[
             'prestashop.product.combination.option']
+        
+        feature_obj = self.session.env[
+            'prestashop.product.feature']
+        
         categories_obj = self.session.env[
             'prestashop.product.category']
+        
+        feature_binder = self.binder_for(
+            'prestashop.product.feature')
+        feature_value_binder = self.binder_for(
+            'prestashop.product.feature.value')
+        
         self._set_main_category()
 
         for category in self.erp_record.categ_id + self.erp_record.categ_ids:
@@ -249,6 +259,38 @@ class ProductTemplateExport(TranslationPrestashopExporter):
                     export_record(
                         self.session,
                         'prestashop.product.combination.option.value',
+                        value_ext_id.id
+                    )
+                    
+        # export features      
+        for line in self.erp_record.feature_line_ids:
+            feature_ext_id = feature_binder.to_backend(
+                line.feature_id.id, wrap=True)
+            if not feature_ext_id:
+                res = {
+                    'backend_id': self.backend_record.id,
+                    'odoo_id': line.feature_id.id,
+                }
+                feature_ext_id = feature_obj.with_context(
+                    connector_no_export=True).create(res)
+                export_record(
+                    self.session,
+                    'prestashop.product.feature',
+                    feature_ext_id.id)
+            
+            for value in line.value_ids:
+                value_ext_id = feature_value_binder.to_backend(value.id, wrap=True)
+                if not value_ext_id:
+                    value_ext_id = self.session.env[
+                        'prestashop.product.feature.value'].\
+                        with_context(connector_no_export=True).create({
+                            'backend_id': self.backend_record.id,
+                            'odoo_id': value.id,
+                            'presta_feature_id': feature_ext_id.id
+                        })
+                    export_record(
+                        self.session,
+                        'prestashop.product.feature.value',
                         value_ext_id.id
                     )
 
@@ -377,12 +419,30 @@ class ProductTemplateExportMapper(TranslationPrestashopExportMapper):
                 {'id': binder.to_backend(category.id, wrap=True)})
         return ext_categ_ids
 
+    def _get_features(self, record):
+        feature_value = []
+        feature_binder = self.binder_for(
+            'prestashop.product.feature')
+        feature_value_binder = self.binder_for(
+            'prestashop.product.feature.value')
+        for line in record.feature_line_ids:
+            feature_ext_id = feature_binder.to_backend(line.feature_id.id, wrap=True)
+            if feature_ext_id:    
+                for value in line.value_ids:
+                    value_ext_id = feature_value_binder.to_backend(value.id, wrap=True)
+                    if value_ext_id:
+                        feature_value.append({'id_feature_value': value_ext_id,
+                                              'id':feature_ext_id})
+        return feature_value
+
     @mapping
     def associations(self, record):
         return {
             'associations': {
                 'categories': {
                     'category_id': self._get_product_category(record)},
+                'product_features':{
+                    'product_feature': self._get_features(record)}
             }
         }
 

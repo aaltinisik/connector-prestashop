@@ -13,31 +13,31 @@ from openerp.addons.connector_prestashop.backend import prestashop
 from openerp.addons.connector.unit.mapper import mapping
 
 
-@on_record_create(model_names='prestashop.product.combination.option')
-def prestashop_product_attribute_created(
+@on_record_create(model_names='prestashop.product.feature')
+def prestashop_product_feature_created(
         session, model_name, record_id, fields=None):
     if session.context.get('connector_no_export'):
         return
     export_record.delay(session, model_name, record_id, priority=20)
 
 
-@on_record_create(model_names='prestashop.product.combination.option.value')
-def prestashop_product_atrribute_value_created(
+@on_record_create(model_names='prestashop.product.feature.value')
+def prestashop_product_feature_value_created(
         session, model_name, record_id, fields=None):
     if session.context.get('connector_no_export'):
         return
     export_record.delay(session, model_name, record_id, priority=20)
 
 
-@on_record_write(model_names='prestashop.product.combination.option')
-def prestashop_product_attribute_written(session, model_name, record_id,
+@on_record_write(model_names='prestashop.product.feature')
+def prestashop_product_feature_written(session, model_name, record_id,
                                          fields=None):
     if session.context.get('connector_no_export'):
         return
     export_record.delay(session, model_name, record_id, priority=20)
 
 
-@on_record_write(model_names='prestashop.product.combination.option.value')
+@on_record_write(model_names='prestashop.product.feature.value')
 def prestashop_attribute_option_written(session, model_name, record_id,
                                         fields=None):
     if session.context.get('connector_no_export'):
@@ -45,19 +45,19 @@ def prestashop_attribute_option_written(session, model_name, record_id,
     export_record.delay(session, model_name, record_id, priority=20)
 
 
-@on_record_write(model_names='product.attribute.value')
-def product_attribute_written(session, model_name, record_id, fields=None):
+@on_record_write(model_names='product.feature')
+def product_feature_written(session, model_name, record_id, fields=None):
     if session.context.get('connector_no_export'):
         return
     model = session.pool.get(model_name)
     record = model.browse(session.cr, session.uid,
                           record_id, context=session.context)
     for binding in record.prestashop_bind_ids:
-        export_record.delay(session, 'prestashop.product.combination.option',
+        export_record.delay(session, 'prestashop.product.feature',
                             binding.id, fields, priority=20)
 
 
-@on_record_write(model_names='produc.attribute.value')
+@on_record_write(model_names='product.feature.value')
 def attribute_option_written(session, model_name, record_id, fields=None):
     if session.context.get('connector_no_export'):
         return
@@ -66,33 +66,31 @@ def attribute_option_written(session, model_name, record_id, fields=None):
                           record_id, context=session.context)
     for binding in record.prestashop_bind_ids:
         export_record.delay(session,
-                            'prestashop.product.combination.option.value',
+                            'prestashop.product.feature.value',
                             binding.id, fields, priority=20)
 
 
 @prestashop
-class ProductCombinationOptionExport(PrestashopExporter):
-    _model_name = 'prestashop.product.combination.option'
+class ProductFeatureExport(PrestashopExporter):
+    _model_name = 'prestashop.product.feature'
 
     def _create(self, record):
-        res = super(ProductCombinationOptionExport, self)._create(record)
-        return res['prestashop']['product_option']['id']
+        res = super(ProductFeatureExport, self)._create(record)
+        return res['prestashop']['product_feature']['id']
 
 
 @prestashop
-class ProductCombinationOptionExportMapper(TranslationPrestashopExportMapper):
-    _model_name = 'prestashop.product.combination.option'
+class ProductFeatureExportMapper(TranslationPrestashopExportMapper):
+    _model_name = 'prestashop.product.feature'
 
     direct = [
-        ('prestashop_position', 'position'),
-        ('group_type', 'group_type'),
+        ('prestashop_position', 'position')
     ]
 
     @mapping
     def translatable_fields(self, record):
         translatable_fields = [
-            ('name', 'name'),
-            ('name', 'public_name'),
+            ('name', 'name')
         ]
         trans = TranslationPrestashopExporter(self.connector_env)
         translated_fields = self.convert_languages(
@@ -101,56 +99,55 @@ class ProductCombinationOptionExportMapper(TranslationPrestashopExportMapper):
 
 
 @prestashop
-class ProductCombinationOptionValueExport(PrestashopExporter):
-    _model_name = 'prestashop.product.combination.option.value'
+class ProductFeatureValueExport(PrestashopExporter):
+    _model_name = 'prestashop.product.feature.value'
 
     def _create(self, record):
-        res = super(ProductCombinationOptionValueExport, self)._create(record)
-        return res['prestashop']['product_option_value']['id']
+        res = super(ProductFeatureValueExport, self)._create(record)
+        return res['prestashop']['product_feature_value']['id']
 
     def _export_dependencies(self):
         """ Export the dependencies for the record"""
-        attribute_id = self.erp_record.attribute_id.id
-        # export product attribute
-        binder = self.binder_for('prestashop.product.combination.option')
-        if not binder.to_backend(attribute_id, wrap=True):
+        feature_id = self.erp_record.feature_id.id
+        # export product feature
+        binder = self.binder_for('prestashop.product.feature')
+        if not binder.to_backend(feature_id, wrap=True):
             exporter = self.get_connector_unit_for_model(
-                TranslationPrestashopExporter,
-                'prestashop.product.combination.option')
-            exporter.run(attribute_id)
+                PrestashopExporter,
+                'prestashop.product.feature')
+            exporter.run(feature_id)
         return
 
 
 @prestashop
-class ProductCombinationOptionValueExportMapper(
+class ProductFeatureValueExportMapper(
         TranslationPrestashopExportMapper):
-    _model_name = 'prestashop.product.combination.option.value'
+    _model_name = 'prestashop.product.feature.value'
 
-    direct = [('name', 'value')]
+    #direct = [('name', 'value')]
 
-# TODO: prestada boyle bir alan yok o nedenle gerekli olmayabilir. test edilecek
 #     @mapping
-#     def prestashop_product_attribute_id(self, record):
-#         attribute_binder = self.binder_for(
-#             'prestashop.product.combination.option.value')
+#     def prestashop_product_feature_id(self, record):
+#         feature_binder = self.binder_for(
+#             'prestashop.product.feature.value')
 #         return {
-#             'id_attribute': attribute_binder.to_backend(
-#                 record.attribute_id.id, wrap=True)
+#             'id_feature': feature_binder.to_backend(
+#                 record.feature_id.id, wrap=True)
 #         }
 
     @mapping
-    def prestashop_product_group_attribute_id(self, record):
-        attribute_binder = self.binder_for(
-            'prestashop.product.combination.option')
+    def prestashop_product_feature_id(self, record):
+        feature_binder = self.binder_for(
+            'prestashop.product.feature')
         return {
-            'id_attribute_group': attribute_binder.to_backend(
-                record.attribute_id.id, wrap=True),
+            'id_feature': feature_binder.to_backend(
+                record.feature_id.id, wrap=True),
         }
 
     @mapping
     def translatable_fields(self, record):
         translatable_fields = [
-            ('name', 'name'),
+            ('name', 'value'),
         ]
         trans = TranslationPrestashopExporter(self.connector_env)
         translated_fields = self.convert_languages(

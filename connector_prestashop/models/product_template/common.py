@@ -41,6 +41,9 @@ class PrestashopProductFeature(models.Model):
     _inherits = {'product.feature': 'odoo_id'}
     
     
+    prestashop_position = fields.Integer('PrestaShop Position')
+    
+    
     odoo_id = fields.Many2one(
         comodel_name='product.feature',
         required=True,
@@ -76,7 +79,7 @@ class PrestashopProductFeatureValue(models.Model):
         string='Feature'
     )
     
-    feature_id = fields.Many2one(
+    presta_feature_id = fields.Many2one(
         comodel_name='prestashop.product.feature',
         string='Feature',
         required=True,
@@ -89,7 +92,7 @@ class ProductTemplateFeature(models.Model):
     
     product_tmpl_id = fields.Many2one('product.template',string='Product Template')
     feature_id = fields.Many2one('product.feature',string='Feature', required=True)
-    feature_value_id = fields.Many2one('product.feature.value', string='Value', required=True)
+    value_ids = fields.Many2many('product.feature.value', string='Value')
 
 
 
@@ -103,7 +106,7 @@ class ProductTemplate(models.Model):
         string='PrestaShop Bindings',
     )
     
-    feature_ids = fields.One2many('product.template.feature','product_tmpl_id',string='Features')
+    feature_line_ids = fields.One2many('product.template.feature','product_tmpl_id',string='Features')
 
     @api.multi
     def update_prestashop_quantities(self):

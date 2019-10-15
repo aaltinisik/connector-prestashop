@@ -57,9 +57,9 @@
         <record id="product_template_feature_tree_view" model="ir.ui.view">
            <field name="model">product.template.feature</field>
            <field name="arch" type="xml">
-               <tree>
+               <tree editable="bottom">
                     <field name="feature_id"/>
-                    <field name="feature_value_id"/>
+                    <field name="value_ids" domain="[('feature_id', '=', feature_id)]" widget="many2many_tags"/>
                     
                 </tree>
            </field>
@@ -129,7 +129,7 @@
            <field name="arch" type="xml">
            	   <page name="connector" position="before">
                     <page name="features" string="Features">
-                    	<field name="feature_ids"/>
+                    	<field name="feature_line_ids"/>
                     </page>
                </page>
                <page name="connector" position="attributes">
