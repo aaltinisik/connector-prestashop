@@ -45,6 +45,7 @@
         'views/account_view.xml',
         'views/stock_view.xml',
         'views/connector_prestashop_menu.xml',
+        'wizard/wizard_merge_customer_view.xml',
         'security/ir.model.access.csv',
         'security/prestashop_security.xml',
         'data/ecommerce_data.xml',

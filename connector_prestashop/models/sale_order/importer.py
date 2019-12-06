@@ -296,6 +296,11 @@ class SaleOrderImport(PrestashopImporter):
                 'is_delivery': True
             })
         erp_order.odoo_id.recompute()
+        #TODO: eger satisin fatura adresi
+#         if erp_order.partner_invoice_id.id != erp_order.partner_id.commercial_partner_id.id and \
+#             erp_order.partner_invoice_id.partner_type != 'invoice':
+#             erp_order.partner_invoice_id.partner_type = 'invoice'
+            
         return True
 
     def _check_refunds(self, id_customer, id_order):

@@ -7,12 +7,44 @@
 
 <openerp>
     <data>
+		
+		<record model="ir.actions.act_window" id="action_merge_presta_customer">
+            <field name="name">Merge Customer</field>
+            <field name="res_model">prestashop.wizard.merge_customer</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+        
+        
+        <record model="ir.actions.act_window" id="action_list_presta_new_customer">
+            <field name="name">New Customers</field>
+            <field name="res_model">res.partner</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('ps_new_customer','=',True),('parent_id','=', False)]</field>
+        </record>
 
+        <menuitem id="menu_res_partner_new_customer" name="New Customers" 
+        parent="menu_prestashop_root" 
+        action="action_list_presta_new_customer"
+        sequence="65"/>
+		
+		
         <record id="view_partner_form" model="ir.ui.view">
             <field name="name">res.partner.form</field>
             <field name="model">res.partner</field>
             <field name="inherit_id" ref="connector.view_partner_connector_form" />
             <field name="arch" type="xml">
+            	<sheet position="before">
+	            	<header attrs="{'invisible':[('ps_new_customer','=',False)]}">
+	                	<button name="button_validate_validate_presta_user" type="object" string="Validate" />
+	                	<button name="%(action_merge_presta_customer)d" type="action" string="Merge" />
+	                	<field name="ps_new_customer" invisible="1"/>
+	                	
+	                </header>
+            	</sheet>
+            	
                 <page name="connector" position="attributes">
                     <attribute name="invisible">0</attribute>
                 </page>
@@ -24,6 +56,10 @@
                 </page>
             </field>
         </record>
+        
+        
+        
+        
 
         <record id="view_prestashop_res_partner_form" model="ir.ui.view">
             <field name="name">prestashop.res.partner.form</field>

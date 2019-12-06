@@ -20,6 +20,13 @@ class ResPartner(models.Model):
         inverse_name='odoo_id',
         string='PrestaShop Address Bindings',
     )
+    
+    ps_new_customer = fields.Boolean('New Prestashop customer', default=False)
+
+
+    @api.multi
+    def button_validate_validate_presta_user(self):
+        self.write({'ps_new_customer':False})
 
 
 class PrestashopResRartner(models.Model):

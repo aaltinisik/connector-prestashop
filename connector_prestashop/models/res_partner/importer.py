@@ -112,6 +112,10 @@ class PartnerImportMapper(ImportMapper):
     @mapping
     def company_id(self, record):
         return {'company_id': self.backend_record.company_id.id}
+    
+    @mapping
+    def new_customer(self, record):
+        return {'ps_new_customer': True}
 
 
 @prestashop
@@ -174,44 +178,45 @@ class AddressImportMapper(ImportMapper):
     def parent_id(self, record):
         parent = self.binder_for('prestashop.res.partner').to_odoo(
             record['id_customer'], unwrap=True)
-        if record['vat_number']:
-            vat_number = record['vat_number'].replace('.', '').replace(' ', '')
-            # TODO: move to custom module
-            regexp = re.compile('^[a-zA-Z]{2}')
-            if not regexp.match(vat_number):
-                vat_number = 'ES' + vat_number
-            if self._check_vat(vat_number):
-                parent.write({'vat': vat_number})
-            else:
-                add_checkpoint(
-                    self.session,
-                    'res.partner',
-                    parent.id,
-                    self.backend_record.id
-                )
+        #TODO: adresten gelen VAT bilgisini dikkate almayacaiz. Prestada vat customer seviyesine tasinmali
+#         if record['vat_number']:
+#             vat_number = record['vat_number'].replace('.', '').replace(' ', '')
+#             # TODO: move to custom module
+#             regexp = re.compile('^[a-zA-Z]{2}')
+#             #if not regexp.match(vat_number):
+#             #    vat_number = 'ES' + vat_number
+#             if self._check_vat(vat_number):
+#                 parent.write({'vat': vat_number})
+#             else:
+#                 add_checkpoint(
+#                     self.session,
+#                     'res.partner',
+#                     parent.id,
+#                     self.backend_record.id
+#                 )
         return {'parent_id': parent.id}
 
     # TODO move to custom localization module
-    @mapping
-    def dni(self, record):
-        parent = self.binder_for('prestashop.res.partner').to_odoo(
-            record['id_customer'], unwrap=True)
-        if not record['vat_number'] and record.get('dni'):
-            vat_number = record['dni'].replace('.', '').replace(
-                ' ', '').replace('-', '')
-            regexp = re.compile('^[a-zA-Z]{2}')
-            if not regexp.match(vat_number):
-                vat_number = 'ES' + vat_number
-            if self._check_vat(vat_number):
-                parent.write({'vat': vat_number})
-            else:
-                add_checkpoint(
-                    self.session,
-                    'res.partner',
-                    parent.id,
-                    self.backend_record.id
-                )
-        return {'parent_id': parent.id}
+#     @mapping
+#     def dni(self, record):
+#         parent = self.binder_for('prestashop.res.partner').to_odoo(
+#             record['id_customer'], unwrap=True)
+#         if not record['vat_number'] and record.get('dni'):
+#             vat_number = record['dni'].replace('.', '').replace(
+#                 ' ', '').replace('-', '')
+#             regexp = re.compile('^[a-zA-Z]{2}')
+#             #if not regexp.match(vat_number):
+#             #    vat_number = 'ES' + vat_number
+#             if self._check_vat(vat_number):
+#                 parent.write({'vat': vat_number})
+#             else:
+#                 add_checkpoint(
+#                     self.session,
+#                     'res.partner',
+#                     parent.id,
+#                     self.backend_record.id
+#                 )
+#         return {'parent_id': parent.id}
 
     def _check_vat(self, vat):
         vat_country, vat_number = vat[:2].lower(), vat[2:]
@@ -252,6 +257,9 @@ class AddressImportMapper(ImportMapper):
     def company_id(self, record):
         return {'company_id': self.backend_record.company_id.id}
 
+    @mapping
+    def new_customer(self, record):
+        return {'ps_new_customer': True}
 
 @prestashop
 class AddressImporter(PrestashopImporter):
