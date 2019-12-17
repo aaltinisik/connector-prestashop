@@ -38,5 +38,11 @@
         sequence="40"
         action="action_prestashop_carrier"/>
 
+        <menuitem id="menu_res_partner_new_customer" name="New Customers"
+        parent="menu_prestashop_root"
+        action="action_list_presta_new_customer"
+        sequence="64"/>
+
+
     </data>
 </openerp>

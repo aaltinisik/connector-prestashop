@@ -24,12 +24,6 @@
             <field name="view_mode">tree,form</field>
             <field name="domain">[('ps_new_customer','=',True),('parent_id','=', False)]</field>
         </record>
-
-        <menuitem id="menu_res_partner_new_customer" name="New Customers" 
-        parent="menu_prestashop_root" 
-        action="action_list_presta_new_customer"
-        sequence="65"/>
-		
 		
         <record id="view_partner_form" model="ir.ui.view">
             <field name="name">res.partner.form</field>
