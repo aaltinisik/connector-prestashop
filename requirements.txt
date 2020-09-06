@@ -2,5 +2,5 @@ html2text
 git+git://github.com/prestapyt/prestapyt@master#egg=prestapyt
 bs4
 # tests dependencies
-freezegun
+freezegun==1.0.0
 vcrpy==1.10.5
